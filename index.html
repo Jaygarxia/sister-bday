@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Wynona</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #d4af37;
+            --dark-bg: #050505;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(212, 175, 55, 0.2);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--dark-bg);
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+        }
+
+        .title-elegant {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, var(--gold), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #a0a0a0;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Time Tracker Styles */
+        .time-tracker {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .time-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--gold);
+            font-weight: 700;
+            line-height: 1;
+        }
+        .time-label {
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: #888;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+
+        /* Interactive Button */
+        .btn-luxury {
+            background: transparent;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 30px;
+            margin-top: 3rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .btn-luxury:hover {
+            background: var(--gold);
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            transform: scale(1.05);
+        }
+
+        /* Screen 2 Styles (Hidden by default) */
+        #screen-2 {
+            display: none;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        #typewriter-text {
+            min-height: 80px; /* Prevents layout shift */
+            color: #e0e0e0;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 3rem;
+        }
+
+        /* 3D Interactive Flip Cards */
+        .flip-card-container {
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
+        .flip-card {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .flip-card-container:hover .flip-card {
+            transform: rotateY(180deg);
+        }
+
+        .flip-front, .flip-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .flip-front {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+        }
+
+        .flip-front h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+        }
+
+        .flip-back {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--gold);
+            backdrop-filter: blur(20px);
+            transform: rotateY(180deg);
+        }
+
+        .flip-back p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Animations */
+        .morph-out {
+            opacity: 0 !important;
+            transform: scale(0.9) !important;
+            pointer-events: none;
+        }
+        
+        .morph-in {
+            display: flex !important;
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div id="screen-1" class="container hero-section">
+        <h2 class="subtitle fade-element">A New Chapter Began</h2>
+         <h2 class="subtitle fade-element">This is all I got for you</h2>
+        <h1 class="title-elegant fade-element">July 2, 2002</h1>
+        
+        <div class="glass-card mt-4 fade-element" style="max-width: 800px;">
+            <p class="lead mb-4">You have been illuminating this world for exactly:</p>
+            <div class="time-tracker" id="countdown-container">
+                <div class="time-box"><div class="time-value" id="years">00</div><div class="time-label">Years</div></div>
+                <div class="time-box"><div class="time-value" id="days">000</div><div class="time-label">Days</div></div>
+                <div class="time-box"><div class="time-value" id="hours">00</div><div class="time-label">Hours</div></div>
+                <div class="time-box"><div class="time-value" id="minutes">00</div><div class="time-label">Minutes</div></div>
+                <div class="time-box"><div class="time-value" id="seconds">00</div><div class="time-label">Seconds</div></div>
+            </div>
+        </div>
+
+        <button id="unlock-btn" class="btn-luxury fade-element">Tap to Unlock Your Present</button>
+    </div>
+
+    <div id="screen-2" class="container hero-section">
+        <h1 class="title-elegant">Happy Birthday, Wynona</h1>
+        
+        <div class="row w-100 justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <p id="typewriter-text"></p>
+            </div>
+        </div>
+
+        <div class="row w-100 mt-4">
+            <div class="col-md-4 flip-card-container">
+                <div class="flip-card">
+                    <div class="flip-front">
+                        <h3>Memory 01</h3>
+                        <p class="mt-2 text-muted">Hover over me</p>
+                    </div>
+                    <div class="flip-back">
+                        <p>"Thinking back to when we were kids... thanks for always being there for me.
+                            We don't have to be around 24/7, but we always show up when the other needs a hand."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 flip-card-container">
+                <div class="flip-card">
+                    <div class="flip-front">
+                        <h3>The Present</h3>
+                        <p class="mt-2 text-muted">Hover over me</p>
+                    </div>
+                    <div class="flip-back">
+                        <p>"Happy birthday! Hope all your goals and the great stuff you've been putting effort into happen soon. 
+                            The best part is, what you're after isn't just some dream, 
+                            but a real story you're building little by little for the future!"</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 flip-card-container">
+                <div class="flip-card">
+                    <div class="flip-front">
+                        <h3>The Future</h3>
+                        <p class="mt-2 text-muted">Hover over me</p>
+                    </div>
+                    <div class="flip-back">
+                        <p>"Keep killing it,Sis! You still have a long way to go, but I've always got your back."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Real-Time Age Calculator (Tetap Berjalan di Background) ---
+        function updateAge() {
+            const birthDate = new Date('2002-07-02T00:00:00');
+            const now = new Date();
+            const diff = now - birthDate;
+            const date = new Date(diff);
+            const years = Math.abs(date.getUTCFullYear() - 1970);
+            const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const daysInCurrentYear = totalDays % 365;
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('years').innerText = years.toString().padStart(2, '0');
+            document.getElementById('days').innerText = daysInCurrentYear.toString().padStart(3, '0');
+            document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+        }
+        setInterval(updateAge, 1000);
+        updateAge();
+
+        // --- 2. Interaksi Transisi Morph & Typewriter Effect ---
+        const unlockBtn = document.getElementById('unlock-btn');
+        const screen1 = document.getElementById('screen-1');
+        const screen2 = document.getElementById('screen-2');
+        
+        // Pesan yang akan diketik otomatis. Silakan ubah teks di bawah ini!
+        const secretMessage = "I didn't just make this to count the time. This is a little corner of the internet, made especially for you. Happy birthday, Kak Wynona. Go ahead and open the cards below...";
+        let i = 0;
+        
+        function typeWriter() {
+            if (i < secretMessage.length) {
+                document.getElementById("typewriter-text").innerHTML += secretMessage.charAt(i);
+                i++;
+                setTimeout(typeWriter, 50); // Kecepatan ketikan
+            }
+        }
+
+        unlockBtn.addEventListener('click', () => {
+            // Animasi transisi keluar untuk Screen 1
+            screen1.classList.add('morph-out');
+            
+            setTimeout(() => {
+                screen1.style.display = 'none';
+                
+                // Animasi transisi masuk untuk Screen 2
+                screen2.classList.add('morph-in');
+                
+                // Mulai efek mesin tik setelah layar berganti
+                setTimeout(typeWriter, 800);
+            }, 1000); // Menunggu 1 detik sesuai durasi CSS transition
+        });
+
+        // --- 3. Advanced Interactive Particle Canvas (Tetap Ada) ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 150 };
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+        window.addEventListener('mouseout', () => { mouse.x = undefined; mouse.y = undefined; });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.density = (Math.random() * 30) + 1;
+                this.color = `rgba(212, 175, 55, ${Math.random()})`; 
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+            update() {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let forceDirectionX = dx / distance;
+                let forceDirectionY = dy / distance;
+                let maxDistance = mouse.radius;
+                let force = (maxDistance - distance) / maxDistance;
+                let directionX = forceDirectionX * force * this.density;
+                let directionY = forceDirectionY * force * this.density;
+
+                if (distance < maxDistance) {
+                    this.x -= directionX;
+                    this.y -= directionY;
+                } else {
+                    if (this.x !== this.baseX) { this.x -= (this.x - this.baseX) / 10; }
+                    if (this.y !== this.baseY) { this.y -= (this.y - this.baseY) / 10; }
+                }
+                this.draw();
+            }
+        }
+
+        function init() {
+            particles = [];
+            let numberOfParticles = (canvas.width * canvas.height) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) { particles.push(new Particle()); }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) { particles[i].update(); }
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a; b < particles.length; b++) {
+                    let distance = ((particles[a].x - particles[b].x) ** 2) + ((particles[a].y - particles[b].y) ** 2);
+                    if (distance < (canvas.width / 10) * (canvas.height / 10)) {
+                        let opacity = 1 - (distance / 20000);
+                        ctx.strokeStyle = `rgba(212, 175, 55, ${opacity * 0.2})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+        
+        /* === TAMBAHKAN CODING INI DI DALAM BAGIAN <script> DI INDEX.HTML === */
+
+// 1. Definisikan teks pesan rahasia untuk "Mode Imut"
+const cuteMessage = "Though my hands offer only this, it is a humble testament to the immense affection within me... A very happy birthday to Wynona Azzah Crissyaree Chandra Brata! Within these words, a quiet sanctuary holds a love spoken in secret, just for your heart. May your days unfold like a beautiful constellation of joy, a continuous tapestry woven with laughter, the soft glow of smiles, and the radiant shimmer of stardust.";
+
+// 2. Buat fungsi untuk mengaktifkan "Easter Egg" Imut
+function activateCuteMode() {
+    // Ganti latar belakang menjadi pink pastel lembut
+    document.body.style.backgroundColor = "#ffebee";
+    document.body.style.backgroundImage = "none"; // Matikan partikel emas sementara
+    
+    // Ubah teks judul dan pesan menjadi warna rose gold/pink gelap
+    const title = document.querySelector('.title-elegant');
+    title.innerText = "Mode Imut: Aktif!";
+    title.style.background = "linear-gradient(45deg, #d81b60, #ad1457)";
+    title.style.webkitBackgroundClip = "text";
+    title.style.webkitTextFillColor = "transparent";
+
+    // Ubah pesan typewriter menjadi pesan imut
+    const typewriter = document.getElementById('typewriter-text');
+    typewriter.innerHTML = cuteMessage;
+    typewriter.style.color = "#880e4f";
+
+    // Modifikasi kartu (contoh sederhana: ubah warna border dan teks)
+    const cards = document.querySelectorAll('.flip-front, .flip-back');
+    cards.forEach(card => {
+        card.style.borderColor = "#f48fb1";
+        card.style.color = "#c2185b";
+    });
+
+    // Sembunyikan tombol unlock (karena sudah di dalam)
+    document.getElementById('unlock-btn').style.display = 'none';
+
+    // Buat dan tambahkan tombol "Kembali ke Mode Elegan"
+    if (!document.getElementById('back-to-elegant-btn')) {
+        const backBtn = document.createElement('button');
+        backBtn.id = 'back-to-elegant-btn';
+        backBtn.innerText = "Kembali ke Mode Elegan ⭐";
+        backBtn.className = "btn-luxury mt-5"; // Gunakan style tombol yang sama
+        backBtn.style.color = "#fff";
+        backBtn.style.backgroundColor = "#c2185b"; // Warna pink/pink tua
+        backBtn.style.borderColor = "#ad1457";
+        
+        // Fungsi untuk kembali ke mode awal
+        backBtn.addEventListener('click', deactivateCuteMode);
+        
+        // Tambahkan ke container (di bawah area kartu)
+        document.querySelector('#screen-2').appendChild(backBtn);
+    }
+}
+
+// 3. Buat fungsi untuk mematikan mode imut dan kembali ke tema awal
+function deactivateCuteMode() {
+    // Kembalikan semua style ke default (refresh halaman adalah cara termudah,
+    // atau kamu bisa membalikkan semua perubahan CSS di atas satu per satu).
+    location.reload(); 
+}
+
+/* === CARA MENGGUNAKAN TOMBOL RAHASIA ===
+   Kamu bisa memanggil fungsi `activateCuteMode()` lewat konsol browser (F12),
+   atau menambahkannya sebagai event listener pada elemen yang tidak terduga,
+   misalnya pada kartu "Memory 01".
+   
+   Contoh menambahkan trigger pada Kartu Memory 01:
+*/
+
+// Tambahkan ini di bagian bawah <script>:
+document.querySelector('.col-md-4.flip-card-container').addEventListener('dblclick', activateCuteMode);
+// Sekarang, klik ganda pada kartu Memory 01 akan mengaktifkan Mode Imut.
+
+
+/* === EASTER EGG 2: KUCING IMUT MUNCUL SAAT KARTU KE-2 DITAHAN === */
+
+// 1. Pilih kartu kedua (index 1 dari array flip-card-container)
+const cards = document.querySelectorAll('.flip-card-container');
+const card2 = cards[1]; 
+
+let pressTimer;
+
+// 2. Fungsi untuk menampilkan animasi kucing
+function showCatEasterEgg() {
+    // Cek apakah kucing sudah muncul agar tidak double
+    if (document.getElementById('cute-cat-overlay')) return;
+
+    // Buat elemen container untuk kucing
+    const catContainer = document.createElement('div');
+    catContainer.id = 'cute-cat-overlay';
+    
+    // Inject HTML dan CSS langsung ke dalam container
+    catContainer.innerHTML = `
+        <div id="cat-popup" style="position: fixed; bottom: -400px; left: 50%; transform: translateX(-50%); z-index: 9999; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; pointer-events: auto;">
+            <h3 style="color: #ffb6c1; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); font-family: 'Space Grotesk', sans-serif; font-weight: bold; margin-bottom: 10px;">
+                !Happy Birthday Dawg! 🐾
+            </h3>
+            <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExMWhiemZwY2Rqb3E0a2dxaWlrYmIyNDdhbzdsMzlicGV3Z2dzbXBhbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3cAP6DJUOUvF9eJmsS/giphy.gif" alt="Cute Cat" style="width: 250px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 4px solid #ffb6c1;">
+            <br>
+            <button onclick="closeCatEasterEgg()" style="margin-top: 15px; padding: 8px 20px; border-radius: 25px; border: none; background: #ffb6c1; color: #fff; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s;">
+                Tutup (Shoo!)
+            </button>
+        </div>
+    `;
+    document.body.appendChild(catContainer);
+
+    // Animasi melompat ke atas setelah elemen masuk ke DOM
+    setTimeout(() => {
+        document.getElementById('cat-popup').style.bottom = '30px';
+    }, 50);
+}
+
+// 3. Fungsi untuk menutup animasi kucing
+window.closeCatEasterEgg = function() {
+    const popup = document.getElementById('cat-popup');
+    if (popup) {
+        popup.style.bottom = '-400px'; // Turunkan lagi ke bawah
+        setTimeout(() => {
+            document.getElementById('cute-cat-overlay').remove(); // Hapus dari HTML
+        }, 600); // Tunggu sampai animasi turun selesai
+    }
+}
+
+// 4. Deteksi Mouse untuk perangkat Laptop/PC
+card2.addEventListener('mousedown', () => {
+    // Mulai hitung mundur 1000 milidetik (1 detik) saat mouse ditekan
+    pressTimer = window.setTimeout(showCatEasterEgg, 1000); 
+});
+
+card2.addEventListener('mouseup', () => {
+    clearTimeout(pressTimer); // Batal jika mouse dilepas sebelum 1 detik
+});
+
+card2.addEventListener('mouseleave', () => {
+    clearTimeout(pressTimer); // Batal jika kursor bergeser dari kartu
+});
+
+// 5. Deteksi Sentuhan (Touch) agar berfungsi jika Wynona membukanya di HP
+card2.addEventListener('touchstart', (e) => {
+    pressTimer = window.setTimeout(showCatEasterEgg, 1000);
+});
+
+card2.addEventListener('touchend', () => {
+    clearTimeout(pressTimer);
+});
+
+/* === ANIMASI KEMBANG API === */
+function launchFireworks() {
+    // Membuat canvas khusus untuk kembang api
+    const fwCanvas = document.createElement('canvas');
+    fwCanvas.style.position = 'fixed';
+    fwCanvas.style.top = '0';
+    fwCanvas.style.left = '0';
+    fwCanvas.style.width = '100%';
+    fwCanvas.style.height = '100%';
+    fwCanvas.style.zIndex = '9999'; // Berada di atas semua elemen
+    fwCanvas.style.pointerEvents = 'none'; // Agar tidak mengganggu klik
+    document.body.appendChild(fwCanvas);
+
+    const ctx = fwCanvas.getContext('2d');
+    fwCanvas.width = window.innerWidth;
+    fwCanvas.height = window.innerHeight;
+
+    const particles = [];
+    // Palet warna kembang api: Emas (luxury), Putih, dan sedikit Pink (hint mode imut)
+    const colors = ['#d4af37', '#ffffff', '#ffb6c1', '#ffd700']; 
+
+    class FireworkParticle {
+        constructor(x, y, color) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 6 + 2;
+            this.velocity = {
+                x: Math.cos(angle) * speed,
+                y: Math.sin(angle) * speed
+            };
+            this.alpha = 1;
+            this.friction = 0.96; // Efek perlambatan udara
+            this.gravity = 0.04;  // Efek jatuh
+        }
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, Math.random() * 2 + 1, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
+            ctx.fill();
+            ctx.restore();
+        }
+        update() {
+            this.velocity.x *= this.friction;
+            this.velocity.y *= this.friction;
+            this.velocity.y += this.gravity;
+            this.x += this.velocity.x;
+            this.y += this.velocity.y;
+            this.alpha -= 0.015; // Kecepatan memudar
+        }
+    }
+
+    // Fungsi menciptakan satu ledakan kembang api
+    function explode(x, y) {
+        for (let i = 0; i < 80; i++) {
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            particles.push(new FireworkParticle(x, y, color));
+        }
+    }
+
+    // Memicu beberapa ledakan beruntun di lokasi acak
+    let explosionCount = 0;
+    const interval = setInterval(() => {
+        if (explosionCount > 6) {
+            clearInterval(interval); // Hentikan ledakan setelah 7 kali
+            return;
+        }
+        // Lokasi ledakan acak di setengah bagian atas layar
+        const x = Math.random() * fwCanvas.width;
+        const y = Math.random() * (fwCanvas.height * 0.5) + 50; 
+        explode(x, y);
+        explosionCount++;
+    }, 400); // Jarak waktu antar ledakan (400ms)
+
+    // Loop animasi
+    function animateFireworks() {
+        const animationId = requestAnimationFrame(animateFireworks);
+        
+        // Efek trail/jejak bercahaya
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; 
+        ctx.fillRect(0, 0, fwCanvas.width, fwCanvas.height);
+
+        particles.forEach((particle, index) => {
+            if (particle.alpha <= 0) {
+                particles.splice(index, 1);
+            } else {
+                particle.update();
+                particle.draw();
+            }
+        });
+
+        // Membersihkan canvas dari memori setelah animasi selesai
+        if (explosionCount > 6 && particles.length === 0) {
+            cancelAnimationFrame(animationId);
+            fwCanvas.remove();
+        }
+    }
+    animateFireworks();
+}
+
+// --- UPDATE: Interaksi Transisi Morph & Typewriter Effect + Kembang Api ---
+unlockBtn.addEventListener('click', () => {
+    // 1. Munculkan Kembang Api seketika saat tombol diklik!
+    launchFireworks();
+
+    // 2. Animasi transisi keluar untuk Screen 1
+    screen1.classList.add('morph-out');
+    
+    setTimeout(() => {
+        screen1.style.display = 'none';
+        
+        // Animasi transisi masuk untuk Screen 2
+        screen2.classList.add('morph-in');
+        
+        // Mulai efek mesin tik setelah layar berganti
+        setTimeout(typeWriter, 800);
+    }, 1000); 
+});
+
+    </script>
+</body>
+</html>
